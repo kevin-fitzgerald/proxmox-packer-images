@@ -85,24 +85,3 @@ variable "ubuntu_server_checksum" {
   description = "SHA256 Checksum for the specified Ubuntu Server version ISO."
   default     = "f8e3086f3cea0fb3fefb29937ab5ed9d19e767079633960ccb50e76153effc98"
 }
-
-variable "ubuntu_user_name" {
-  type        = string
-  description = "Name of the linux user to create."
-
-  validation {
-    condition     = var.ubuntu_user_name != "root"
-    error_message = "Ubuntu user name must not be 'root'."
-  }
-}
-
-variable "ubuntu_user_password" {
-  type        = string
-  description = "Password for the primary linux user.  Required for sudo."
-  sensitive   = true
-}
-
-variable "ubuntu_user_ssh_public_key" {
-  type        = string
-  description = "Content of the ssh public key or URL of a GitHub public key, assigned to the primary linux user."
-}

@@ -16,6 +16,5 @@ build {
     user             = "root"
     roles_path       = "./ansible/roles"
     galaxy_file      = "./ansible/requirements.yaml"
-    extra_arguments  = ["--extra-vars", "user=${var.ubuntu_user_name} user_password=${var.ubuntu_user_password} user_ssh_public_key=${var.ubuntu_user_ssh_public_key}"]
   }
 }

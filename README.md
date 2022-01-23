@@ -48,6 +48,9 @@ packer validate -var-file=<your-file-name>.pkrvars.hcl .
 ```bash
 packer build -var-file=<your-file-name>.pkrvars.hcl .
 ```
+5. Once the build is complete, you can edit the Cloud Init section of the template in the Proxmox UI with default values for User, Password, SSH, and DNS.  The settings will be inherited by clones.
+6. Clone the template.
+7. Customize the Cloud Init IP address, VLAN ID of the network interface, and disk size of the clone, then start the VM.
 
 ## Variables <a name=variables />
 | Name | Description | Default |
@@ -68,9 +71,6 @@ packer build -var-file=<your-file-name>.pkrvars.hcl .
 | **packer_host_ip** | IP of the packer host, grabbing the subiquity install config from a local http server. |  |
 | **ubuntu_server_version** | Ubuntu Server version, including minor version. | "20.04.3" |
 | **ubuntu_server_checksum** | SHA256 Checksum for the specified Ubuntu Server version ISO. | f8e3086f3cea0fb3fefb29937ab5ed9d19e767079633960ccb50e76153effc98 |
-| **ubuntu_user_name** | Name of the primary linux user to create. |  |
-| **ubuntu_user_password** | Password for the primary linux user.  Required for sudo. Provide this value using the PKR_VAR_ubuntu_user_password environment variable. |  |
-| **ubuntu_user_ssh_public_key** | Content of the ssh public key or URL of a GitHub public key, assigned to the primary linux user. |  |
 
 ## About 'keys' <a name=about-keys />
 For convenience, I've seeded this project with an SSH private and public key used by the root user to connect and execute Ansible playbooks during provisioning. Each of th images applies the devsec.hardening.ssh_hardening ansible role, which disables all forms of root SSH authentication.  Additionally, the final step of the 'sysprep' role removes the corresponding SSH public key from the root users authorized keys list.  Still, it is conceivable that while provisioning is running someone could grab the private key from this repo and SSH into the machine as root.  For my use case this risk is acceptable, but it may not be for yours.
