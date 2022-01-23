@@ -1,0 +1,76 @@
+---
+- name: install common packages
+  apt:
+    name:
+      - ufw
+      - unattended-upgrades
+      - vim
+      - git
+      - curl
+      - sudo
+      - python3-pip
+    state: present
+    update_cache: yes
+
+- name: enable ufw and allow ssh
+  community.general.ufw:
+    rule: allow
+    name: OpenSSH
+    state: enabled
+
+- name: ensure user account exists
+  user:
+    name: "{{ user }}"
+    password: "{{ user_password | password_hash('sha512') }}"
+    groups: [sudo]
+    shell: /usr/bin/bash
+
+- name: install ssh key for user account
+  ansible.posix.authorized_key:
+    user: "{{ user }}"
+    state: present
+    exclusive: yes
+    key: "{{ user_ssh_public_key }}"
+
+- name: install vim configuration
+  copy:
+    src: vimrc
+    dest: "/home/{{ user }}/.vimrc"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0644'
+
+- name: disable sudo lecture
+  copy:
+    src: nolecture
+    dest: /etc/sudoers.d/nolecture
+    mode: 0440
+  
+- name: configure default editor
+  community.general.alternatives:
+    name: editor
+    path: /usr/bin/vim
+
+- name: remove cloud-init passwordless sudo
+  file:
+    path: /etc/sudoers.d/90-cloud-init-users
+    state: absent
+
+- name: disable first time sudo nag
+  file:
+    path: "/home/{{ user }}/.sudo_as_admin_successful"
+    state: touch
+    owner: "{{ user }}"
+    group: "{{ user }}"
+
+- name: disable pam motd
+  lineinfile:
+    path: /etc/pam.d/sshd
+    regexp: '^(# )?session\s*optional\s*pam_motd\.so\s*motd=\/run\/motd\.dynamic$'
+    line: "# session optional pam_motd.so motd=/run/motd.dynamic"
+  
+- name: prevent pam motd update
+  lineinfile:
+    path: /etc/pam.d/sshd
+    regexp: '^(# )?session\s*optional\s*pam_motd\.so\s*noupdate$'
+    line: "# session optional pam_motd.so noupdate"

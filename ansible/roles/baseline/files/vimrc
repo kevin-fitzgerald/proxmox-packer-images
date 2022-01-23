@@ -1,0 +1,38 @@
+" Set compatability to Vim only.
+set nocompatible
+
+" Enable line numbering
+set number
+
+" Automatically set new line indentation at the same level as the preceeding line
+set autoindent
+
+" Sets default indentation level for autoindent
+set shiftwidth=4
+
+" When set, pressing tab results in <softtabstop> spaces being inserted.  If not set, tab chars will be used instead of spaces.
+set expandtab
+
+" The number of spaces a tab char equals
+set softtabstop=4
+
+" Show partial cmd in status line
+set showcmd
+
+" Show matching brackets
+set showmatch
+
+" Do case insensitive matching
+set ignorecase
+
+" Enable mouse usage
+set mouse=a
+
+" Faster scrolling
+set ttyfast
+
+" Set vim to use linux system clipboard register
+set clipboard=unnamedplus
+
+" Enable syntax highlighting
+syntax on

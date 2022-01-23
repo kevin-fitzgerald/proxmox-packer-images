@@ -1,0 +1,29 @@
+---
+- name: ensure cloud-init is installed
+  package:
+    name: cloud-init
+    state: latest
+
+- name: check if default installer netplan exists
+  stat:
+    path: /etc/netplan/00-installer-config.yaml
+  register: netplan_default
+
+- name: delete default netplan file if it exists
+  file:
+    path: /etc/netplan/00-installer-config.yamlql
+    state: absent
+  when: not netplan_default.stat.exists
+
+- name: delete old cloud-init config files
+  shell: /bin/rm -rf /etc/cloud/cloud.cfg.d/*
+  args:
+    warn: no
+
+- name: install custom cloud-init config
+  copy:
+    src: ansible-ci.cfg
+    dest: /etc/cloud/cloud.cfg.d/ansible-ci.cfg
+
+- name: reset cloud-init
+  shell: cloud-init clean

@@ -1,0 +1,45 @@
+---
+- name: delete old netplan file
+  file:
+    path: /etc/netplan/00-installer-config.yaml
+    state: absent
+
+- name: disable rsyslog
+  service:
+    name: rsyslog
+    enabled: no
+
+- name: rotate logs
+  command: logrotate -f /etc/logrotate.conf
+
+- name: stop rsyslog
+  service:
+    name: rsyslog
+    state: stopped
+
+- name: delete old ubuntu
+  shell: 
+    cmd: rm -rf /var/log/*.1
+    warn: no
+
+- name: clean out apt repo
+  apt:
+    autoremove: yes
+    autoclean: yes
+
+- name: nuke user ansible folder
+  command: "rm -rf /home/{{ user }}/.ansible"
+  
+- name: reset cloud-init
+  shell: cloud-init clean
+
+- name: enable rsyslog
+  service:
+    name: rsyslog
+    enabled: yes
+
+- name: remove root ssh provisioning key
+  ansible.posix.authorized_key:
+    user: root
+    state: absent
+    key: "{{ lookup('file', '../../../../keys/root.pub') }}"

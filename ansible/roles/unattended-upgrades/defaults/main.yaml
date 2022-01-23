@@ -1,0 +1,9 @@
+---
+# email address where change notifications will be sent
+ua_mail: root@localhost
+
+# allow unattended upgrades to automatically reboot the system when necessary, without confirmation
+ua_automatic_reboot: "true"
+
+# time in military format when system will automatically reboot when necessary
+ua_automatic_reboot_time: '03:30'
